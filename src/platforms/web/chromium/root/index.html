@@ -53,13 +53,13 @@
                 ide.openIn(world);
 
                 ide.getURL('version', function (response) { document.title = document.title.replace("@AppVersion", response); });
-
-                ide.inform = function(title, message, callback) { 
+                ide.initLib();
+                ide.inform = function(title, message, callback) {
                     var myself = this;
                     if (!myself.informing) {
                         var box = new DialogBoxMorph();
                         myself.informing = true;
-                        box.ok = function() { 
+                        box.ok = function() {
                             myself.informing = false;
                             if (callback) { callback() };
                             this.accept();
@@ -75,7 +75,7 @@
             function loop() {
                 world.doOneCycle();
             };
-            
+
         </script>
         </head>
         <body style="margin: 0;">

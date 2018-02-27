@@ -7,7 +7,7 @@ SpriteIconMorph.prototype.userMenu = function () {
     var myself = this;
     menu.addItem(
             'connect to Arduino',
-            function () { 
+            function () {
                 myself.object.arduino.attemptConnection();
             });
     menu.addItem(
@@ -29,9 +29,9 @@ IDE_Morph.prototype.snapMenu = function () {
     menu.addLine();
     menu.addItem('About Snap4Arduino...', 'aboutSnap4Arduino');
     menu.addLine();
-    menu.addItem('Snap4Arduino website', 
+    menu.addItem('Snap4Arduino website',
         function() {
-            window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
+            window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite');
         }
     );
     menu.addItem('Snap4Arduino repository',
@@ -91,7 +91,7 @@ IDE_Morph.prototype.projectMenu = function () {
     menu.addItem('Save, share and get URL...', 'saveAndShare');
     menu.addLine();
     menu.addItem(
-        'New Arduino translatable project', 
+        'New Arduino translatable project',
         'createNewArduinoProject',
         'Experimental feature!\nScripts written under this\n'
             + 'mode will be translatable\nas Arduino sketches'
@@ -99,7 +99,7 @@ IDE_Morph.prototype.projectMenu = function () {
     if (shiftClicked) {
         menu.addLine();
         menu.addItem(
-            'Start a Snap Jr. session', 
+            'Start a Snap Jr. session',
             'startSnapJr',
             'Start Snap4Arduino in an\nicon-based blocks mode\n'
                 + 'for the youngest programmers',
@@ -162,7 +162,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     dlg = new DialogBoxMorph();
 
     this.getURL('version', function (version) {
-        
+
         aboutTxt = 'Snap4Arduino ' + version +'\n'
         + 'http://snap4arduino.rocks\n\n'
         + 'Copyright \u24B8 2018 Bernat Romagosa\n'
@@ -183,7 +183,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
 
         dlg.inform('About Snap4Arduino', aboutTxt, world);
     });
-    
+
     creditsTxt = localize('Contributors')
         + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
         + 'several features and bugfixes, Spanish translation\n'
@@ -253,6 +253,27 @@ IDE_Morph.prototype.getCostumesList = function (dirname) {
     return costumes;
 };
 
+IDE_Morph.prototype.initLib = function () {
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = (function(x) {
+    return function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+              var xmlDoc = xhttp.responseXML; //important to use responseXML here
+              var serializer = new XMLSerializer();
+              var xmlString = serializer.serializeToString(xmlDoc);
+
+              x.droppedText(xmlString, 'timer.xml');
+            }
+          }
+      })(this);
+      xhttp.open("GET", "../libraries/timer.xml", true);
+      xhttp.send();
+
+//  this.droppedText('', 'timer.xml');
+
+
+}
 
 // Snap4Arduino logo
 IDE_Morph.prototype.createLogo = function () {
@@ -336,10 +357,10 @@ IDE_Morph.prototype.setLanguageS4A = function (lang, callback) {
         myself.reflectLanguage(lang, callback);
     };
     document.head.appendChild(s4aTranslation);
-    s4aTranslation.src = s4aSrc; 
+    s4aTranslation.src = s4aSrc;
 };
 
-// Fix problme with connected board when creating a new project 
+// Fix problme with connected board when creating a new project
 // while a board is connected (it is not freed for the new sprites)
 IDE_Morph.prototype.originalNewProject = IDE_Morph.prototype.newProject
 IDE_Morph.prototype.newProject = function () {
@@ -405,8 +426,8 @@ IDE_Morph.prototype.saveAndShare = function () {
 
     if (!this.projectName) {
         myself.prompt(
-                'Please enter a name for your project', 
-                function (name) { 
+                'Please enter a name for your project',
+                function (name) {
                     myself.projectName = name;
                     myself.doSaveAndShare();
                 });
@@ -442,7 +463,7 @@ IDE_Morph.prototype.doSaveAndShare = function () {
 
 IDE_Morph.prototype.showProjectUrl = function (projectName) {
     var info = new DialogBoxMorph(),
-        label = localize('This project is now public at the following URL:'), 
+        label = localize('This project is now public at the following URL:'),
         txt = new InputFieldMorph(
             SnapCloud.urlForMyProject(projectName),
             false, // no numeric
@@ -518,14 +539,14 @@ IDE_Morph.prototype.newArduinoProject = function() {
 
     // toggle unusable blocks
     var defs = SpriteMorph.prototype.blocks;
-   
-    SpriteMorph.prototype.categories.forEach(function (category) { 
+
+    SpriteMorph.prototype.categories.forEach(function (category) {
         Object.keys(defs).forEach(function (selector) {
             if (!defs[selector].transpilable) {
                 StageMorph.prototype.hiddenPrimitives[selector] = true;
             }
         });
-        myself.flushBlocksCache(category) 
+        myself.flushBlocksCache(category)
     });
 
     // hide empty categories
@@ -563,12 +584,12 @@ IDE_Morph.prototype.createNewProject = function () {
                     SpriteMorph.prototype.blockTemplates = SpriteMorph.prototype.notSoOriginalBlockTemplates;
                     myself.isArduinoTranslationMode = false;
                     // show all categories
-                    
+
                     myself.categories.children.forEach(function (each) {
                         each.setPosition(each.originalPosition);
                         each.show();
                     });
-                    
+
                     myself.categories.setHeight(myself.categories.height() + 30);
                 }
                 myself.newProject();
@@ -711,4 +732,3 @@ ProjectDialogMorph.prototype.addUserMenuToListItems = function () {
         }
     });
 };
-
